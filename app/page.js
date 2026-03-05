@@ -16,6 +16,15 @@ import ReviewSnippets from '@/components/ReviewSnippets';
 import MovieSearch from '@/components/MovieSearch';
 import AnalysisProgress from '@/components/AnalysisProgress';
 
+const QUICK_MOVIES = [
+    { title: "The Dark Knight", imdbId: "tt0468569" },
+    { title: "Inception", imdbId: "tt1375666" },
+    { title: "The Shawshank Redemption", imdbId: "tt0111161" },
+    { title: "Interstellar", imdbId: "tt0816692" },
+    { title: "Avengers: Endgame", imdbId: "tt4154796" }
+];
+
+
 export default function HomePage() {
     const [imdbId, setImdbId] = useState('');
     const [loading, setLoading] = useState(false);
@@ -79,6 +88,11 @@ export default function HomePage() {
         }
     };
 
+    const handleQuickTry = (id) => {
+        setImdbId(id);
+        handleAnalyze(id);
+    };
+
     return (
         <motion.div
             className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950"
@@ -132,6 +146,39 @@ export default function HomePage() {
                             {loading ? 'Analyzing...' : 'Analyze Movie'}
                         </button>
                     </motion.form>
+
+                    {/* Quick Try Movies */}
+                    <motion.div
+                        className="w-full max-w-2xl px-4"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        duration={0.8}
+                        delay={0.3}
+                    >
+                        <div className="text-center space-y-2">
+                            <h2 className="text-xl font-semibold text-gray-200">Try These Movies</h2>
+                            <p className="text-sm text-gray-400">
+                                These movies have enough audience reviews for accurate sentiment analysis.
+                            </p>
+                        </div>
+
+                        <div className="mt-4">
+                            <p className="text-xs text-center text-gray-500 mb-3 uppercase tracking-wider font-medium">
+                                Not sure what to search? Try one of these:
+                            </p>
+                            <div className="flex flex-wrap gap-2 justify-center">
+                                {QUICK_MOVIES.map((movie) => (
+                                    <span
+                                        key={movie.imdbId}
+                                        onClick={() => handleQuickTry(movie.imdbId)}
+                                        className="bg-gray-800 text-gray-200 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-gray-700 transition border border-gray-700 hover:border-blue-500/50"
+                                    >
+                                        {movie.title}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
 
                     {/* Validation Error */}
                     {validationError && (
