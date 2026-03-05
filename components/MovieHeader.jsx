@@ -10,7 +10,8 @@ export default function MovieHeader({
     releaseDate,
     rating,
     cast = [],
-    director
+    director,
+    plot
 }) {
     if (!title) return null;
 
@@ -22,51 +23,50 @@ export default function MovieHeader({
     const topCast = cast.slice(0, 5).map(member => member.name).join(', ');
 
     return (
-        <header className="flex flex-col md:flex-row gap-6 p-6 bg-white rounded-xl shadow-sm mb-6">
-            {/* Poster */}
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+            {/* Left Column - Poster */}
             <img
                 src={posterUrl}
                 alt={`Poster for ${title}`}
-                className="w-full md:w-48 xl:w-56 h-auto object-cover rounded-lg shadow-md"
+                className="w-40 rounded-xl shadow-lg hover:scale-105 transition duration-300 object-cover"
             />
 
-            {/* Details */}
-            <div className="flex-1 flex flex-col justify-center">
-                {/* Title & Year */}
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                    {title} {releaseYear && <span className="text-gray-500 font-normal">({releaseYear})</span>}
+            {/* Right Column - Movie Information */}
+            <div className="flex-1">
+                {/* Movie Title and Year */}
+                <h2 className="text-3xl font-bold text-white mb-2">
+                    {title} {releaseYear && <span className="text-gray-400">({releaseYear})</span>}
                 </h2>
 
-                {/* Metadata section */}
-                <div className="flex flex-wrap items-center gap-4 mb-4">
-                    {/* Rating Badge */}
-                    {rating > 0 && (
-                        <div className="flex items-center gap-2">
-                            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-800 text-teal-400 font-bold border-2 border-slate-700 shadow-inner">
-                                {Number(rating).toFixed(1)}
-                            </span>
-                            <span className="text-sm text-gray-600 font-medium">User Score</span>
-                        </div>
-                    )}
-                </div>
+                {/* IMDb Rating */}
+                {rating > 0 && (
+                    <div className="text-gray-400 mt-1">
+                        <span className="text-yellow-500 font-semibold">⭐ {rating} / 10</span>
+                    </div>
+                )}
 
-                {/* Credits */}
-                <div className="space-y-3 mt-2">
-                    {director && (
-                        <div className="text-sm">
-                            <span className="font-semibold text-gray-900 block md:inline mr-2">Director:</span>
-                            <span className="text-gray-700">{director}</span>
-                        </div>
-                    )}
+                {/* Director */}
+                {director && (
+                    <div className="text-gray-400 mt-3">
+                        <span className="font-medium text-gray-300">Director:</span> {director}
+                    </div>
+                )}
 
-                    {topCast && (
-                        <div className="text-sm">
-                            <span className="font-semibold text-gray-900 block md:inline mr-2">Top Cast:</span>
-                            <span className="text-gray-700 leading-relaxed">{topCast}</span>
-                        </div>
-                    )}
-                </div>
+                {/* Cast */}
+                {topCast && (
+                    <div className="text-gray-400 mt-1">
+                        <span className="font-medium text-gray-300">Cast:</span> {topCast}
+                    </div>
+                )}
+
+                {/* Plot Summary */}
+                {plot && (
+                    <div className="border-t border-gray-700 pt-3 mt-4">
+                        <div className="text-sm font-medium text-gray-300 mb-2">Plot Summary</div>
+                        <p className="text-gray-300 leading-relaxed">{plot}</p>
+                    </div>
+                )}
             </div>
-        </header>
+        </div>
     );
 }

@@ -9,7 +9,13 @@ export function parseAIResponse(rawResponse) {
         summary: "Sentiment analysis is currently unavailable.",
         positiveThemes: [],
         negativeThemes: [],
-        classification: "Unavailable"
+        classification: "Unavailable",
+        positivePercent: 50,
+        negativePercent: 50,
+        reviewSnippets: {
+            positive: null,
+            negative: null
+        }
     };
 
     if (typeof rawResponse !== 'string') {
@@ -26,46 +32,71 @@ export function parseAIResponse(rawResponse) {
 
         const parsed = JSON.parse(jsonString.trim());
 
-        // Validate summary
-        if (typeof parsed.summary !== 'string' || parsed.summary.trim() === '') {
-            return fallback;
-        }
+        // Process Summary
+        const summary = (typeof parsed.summary === 'string' && parsed.summary.trim() !== '') ? parsed.summary.trim() : fallback.summary;
 
-        // Validate and process themes
+        // Process Themes
         const parseThemes = (themes) => {
-            if (!Array.isArray(themes)) return null;
+            if (!themes || !Array.isArray(themes)) return [];
             return themes
                 .filter(t => typeof t === 'string')
                 .map(t => t.trim())
                 .filter(t => t !== '');
         };
 
-        const positiveThemes = parseThemes(parsed.positiveThemes);
-        const negativeThemes = parseThemes(parsed.negativeThemes);
+        const positiveThemes = parseThemes(parsed.themes?.positive);
+        const negativeThemes = parseThemes(parsed.themes?.negative);
 
-        if (positiveThemes === null || negativeThemes === null) {
-            return fallback;
+        // Process Classification
+        let classification = fallback.classification;
+        if (typeof parsed.overall === 'string') {
+            classification = parsed.overall.trim().toLowerCase();
+            classification = classification.charAt(0).toUpperCase() + classification.slice(1);
+            if (!['Positive', 'Mixed', 'Negative'].includes(classification)) {
+                classification = fallback.classification;
+            }
         }
 
-        // Validate and normalize classification
-        if (typeof parsed.classification !== 'string') {
-            return fallback;
+        // Process Percentages (Don't trust blindly)
+        let posPct = typeof parsed.positivePercent === 'number' ? parsed.positivePercent : 50;
+        let negPct = typeof parsed.negativePercent === 'number' ? parsed.negativePercent : 50;
+
+        // Ensure they add up to 100
+        const total = posPct + negPct;
+        if (total > 0 && total !== 100) {
+            posPct = Math.round((posPct / total) * 100);
+            negPct = 100 - posPct;
+        } else if (total === 0) {
+            posPct = 50;
+            negPct = 50;
         }
 
-        let classification = parsed.classification.trim().toLowerCase();
-        classification = classification.charAt(0).toUpperCase() + classification.slice(1);
+        // Process Review Snippets (Normalize length)
+        const normalizeSnippet = (snippet) => {
+            if (typeof snippet !== 'string' || snippet.trim() === '') return null;
+            let text = snippet.trim();
+            if (text.length > 150) {
+                text = text.substring(0, 147) + "...";
+            }
+            return text;
+        };
 
-        if (!['Positive', 'Mixed', 'Negative'].includes(classification)) {
-            return fallback;
-        }
+        const reviewSnippets = {
+            positive: normalizeSnippet(parsed.reviewSnippets?.positive),
+            negative: normalizeSnippet(parsed.reviewSnippets?.negative)
+        };
 
         return {
-            summary: parsed.summary.trim(),
+            summary,
             positiveThemes,
             negativeThemes,
-            classification
+            classification,
+            positivePercent: posPct,
+            negativePercent: negPct,
+            reviewSnippets
         };
     } catch (error) {
+        console.warn("[Parse Error] Failed to parse AI response:", error.message);
         return fallback;
     }
 }

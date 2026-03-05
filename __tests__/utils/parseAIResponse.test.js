@@ -3,7 +3,7 @@
  * @description Unit tests for the parseAIResponse util.
  */
 
-import { parseAIResponse } from '../../utils/parseAIResponse';
+import { parseAIResponse } from '@/utils/parseAIResponse';
 
 describe('parseAIResponse', () => {
     const fallback = {

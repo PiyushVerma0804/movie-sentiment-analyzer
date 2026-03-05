@@ -1,59 +1,62 @@
-# Movie Sentiment Dashboard
+# AI Movie Sentiment Analyzer
 
-An AI-powered movie sentiment analysis application built with Next.js (App Router), Tailwind CSS, TMDb API, and OpenAI.
+A modern, fast, and intelligent Movie Sentiment Analysis web application built with **Next.js 14 (App Router)** and **Tailwind CSS**. It leverages the TMDB API for movie discovery and data, and uses Google Gemini 2.5 AI for complex sentiment aggregation from audience reviews.
 
-## Getting Started
+## Features
+- **Intelligent Search:** Quick find movies by title using TMDB search capabilities.
+- **Audience Sentiment Extraction:** Uses Gemini AI to parse through raw community movie reviews, generating a reliable aggregate positive/negative spread.
+- **Content Themes:** Automatically surfaces recurring themes and critical feedback snippets.
+- **Robust Cacheing Setup:** An integrated in-memory caching system supports deduplication and TTL guards to drastically lower external API hits.
 
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- API Keys for TMDb and OpenAI
+---
 
-### Local Development
+## Code Architecture
+The repository adheres to a clean architecture pattern making it extremely intuitive for developers to jump in.
 
-1. Install dependencies:
-   ```bash
+- `/app`: Next.js App Router UI pages and Backend API routes (`/api/analyze/route.js`).
+- `/components`: Self-contained, pure React UI presentation components (e.g. `SentimentCard`, `MovieSearch`).
+- `/services`: External API communication adapters (`aiService.js`, `tmdbService.js`).
+- `/utils`: Pure functional utilities heavily aimed at string formatting and AI payload extraction.
+- `/lib`: Global infrastructure integrations, particularly caching and rate limiting singletons.
+
+---
+
+## 🚀 Setup Instructions
+
+1. **Clone the repository:**
+   \`\`\`bash
+   git clone <repository_url>
+   cd movie-sentiment-analyzer
+   \`\`\`
+
+2. **Install dependencies:**
+   \`\`\`bash
    npm install
-   ```
+   \`\`\`
 
-2. Copy the example environment variables file and fill in your keys:
-   ```bash
-   cp .env.example .env.local
-   ```
-   **Required Environment Variables:**
-   - `TMDB_API_KEY`: Your The Movie Database v3 API key.
-   - `OPENAI_API_KEY`: Your OpenAI API key.
+3. **Configure Environment Variables:**
+   Rename \`.env.example\` to \`.env.local\` and populate your secret keys:
+   \`\`\`env
+   TMDB_API_KEY="your_tmdb_api_key_v3_here"
+   GEMINI_API_KEY="your_gemini_api_key_here"
+   \`\`\`
 
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+## 💻 Running Locally
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Start the local development server:
+\`\`\`bash
+npm run dev
+\`\`\`
+The application will be running at \`http://localhost:3000\`.
 
-## Production Deployment (Vercel)
+## 📦 Deployment Instructions
 
-This application is fully optimized for Vercel's Serverless environment.
+The application is fully configured for zero-setup deployment via **Vercel** or any cloud provider supporting standard Next.js deployments.
 
-1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket).
-2. Go to [Vercel](https://vercel.com/) and import the repository.
-3. Configure the following **Environment Variables** securely in the Vercel project settings:
-   - `TMDB_API_KEY`
-   - `OPENAI_API_KEY`
-4. Deploy the project. Vercel will automatically use `npm run build` to statically generate/compile the project.
+1. Connect your repository to Vercel.
+2. Under deployment settings, set your Environment Variables:
+   - \`TMDB_API_KEY\`
+   - \`GEMINI_API_KEY\`
+3. Deploy! Next.js will automatically static-generate and deploy the API routes serverlessly.
 
-### Testing Production Locally
-
-To verify the production build behaves correctly on your local machine:
-
-```bash
-# Build the production optimized bundle
-npm run build
-
-# Start the production server
-npm run start
-```
-
-## Architecture & Edge Compatibility
-- **API Routes**: Prepared for serverless environment execution. Uses fast native `fetch` mappings.
-- **Error Handling**: Follows secure practices (does not leak stack traces to the client in production).
-- **Caching**: Abstracted memory caching ensures no memory leaks during serverless cold starts. For persistent edge caching, consider dropping in Vercel KV into `lib/infrastructure/cache.js`.
+*Note: For a fully scaled production runtime, standard implementation dictates converting \`lib/cache.js\` into a persistent Redis or Vercel KV store so rate limit blocks persist across lambda deployments.*

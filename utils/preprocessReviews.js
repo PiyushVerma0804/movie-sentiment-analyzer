@@ -27,12 +27,15 @@ export function preprocessReviews(reviews) {
             continue;
         }
 
-        // Trim whitespace
+        // Trim whitespace and remove completely empty values
         text = text.trim();
-
-        // Remove empty values and reviews shorter than 20 characters
-        if (text.length < 20) {
+        if (!text) {
             continue;
+        }
+
+        // Truncate excessively long individual reviews before sending to AI
+        if (text.length > 500) {
+            text = text.substring(0, 500) + "...";
         }
 
         // Basic deduplication

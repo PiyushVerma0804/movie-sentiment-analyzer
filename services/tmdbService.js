@@ -4,8 +4,8 @@
  * Responsible for fetching movie details, reviews, and other external movie data.
  */
 
-import { env } from '../../config/env';
-import { TMDB_BASE_URL } from '../../config/constants';
+import { env } from '@/config/env';
+import { TMDB_BASE_URL } from '@/config/constants';
 
 /**
  * Generic helper to make TMDb API requests with authorization.

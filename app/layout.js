@@ -4,6 +4,8 @@
  * Wraps all pages with HTML and body tags, global styles, and shared UI (if any).
  */
 
+import './globals.css';
+
 export const metadata = {
     title: 'Movie Sentiment Analyzer',
     description: 'AI-powered movie sentiment analysis tool',

@@ -3,7 +3,7 @@
  * @description Unit tests for the validateImdb util.
  */
 
-import { validateImdb } from '../../utils/validateImdb';
+import { validateImdb } from '@/utils/validateImdb';
 
 describe('validateImdb', () => {
     it('should return true for valid 7-digit IDs', () => {

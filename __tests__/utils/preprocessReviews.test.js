@@ -3,7 +3,7 @@
  * @description Unit tests for the preprocessReviews util.
  */
 
-import { preprocessReviews } from '../../utils/preprocessReviews';
+import { preprocessReviews } from '@/utils/preprocessReviews';
 
 describe('preprocessReviews', () => {
     describe('A) Invalid input handling', () => {
